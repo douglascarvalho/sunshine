@@ -1,5 +1,6 @@
 package com.doug.android.app.sunshine;
 
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class DetailActivity extends AppCompatActivity {
 
@@ -58,6 +60,13 @@ public class DetailActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
 
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+
+            Intent intent = getActivity().getIntent();
+            if(intent != null && intent.hasExtra(Intent.EXTRA_TEXT)){
+                String forecastInfo = intent.getStringExtra(Intent.EXTRA_TEXT);
+                ((TextView)rootView.findViewById(R.id.forecastInfo)).setText(forecastInfo);
+            }
+
             return rootView;
         }
     }
