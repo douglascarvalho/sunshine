@@ -10,5 +10,12 @@
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key">location</string>
     <string name="pref_location_default">94043</string>
+    <string name="pref_temp_unit_metric_entry">Metric</string>
+    <string name="pref_temp_unit_imperial_entry">Imperial</string>
+    <string name="pref_temp_unit_metric_value">metric</string>
+    <string name="pref_temp_unit_imperial_value">imperial</string>
+    <string name="pref_temp_unit_label">Temperature Units</string>
+    <string name="pref_temp_unit_key">temperature_unit</string>
+    <string name="pref_temp_unit_default">metric</string>
 
 </resources>
