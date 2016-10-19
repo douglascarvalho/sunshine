@@ -17,5 +17,6 @@
     <string name="pref_temp_unit_label">Temperature Units</string>
     <string name="pref_temp_unit_key">temperature_unit</string>
     <string name="pref_temp_unit_default">metric</string>
+    <string name="action_map">Map Location</string>
 
 </resources>
