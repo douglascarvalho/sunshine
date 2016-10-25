@@ -71,8 +71,11 @@ public class DetailActivity extends AppCompatActivity {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
 
             Intent intent = getActivity().getIntent();
-            if(intent != null && intent.hasExtra(Intent.EXTRA_TEXT)){
-                mForecastInfo = intent.getStringExtra(Intent.EXTRA_TEXT);
+            if(intent != null){
+                mForecastInfo = intent.getDataString();
+            }
+
+            if(mForecastInfo != null){
                 ((TextView)rootView.findViewById(R.id.forecastInfo)).setText(mForecastInfo);
             }
 
