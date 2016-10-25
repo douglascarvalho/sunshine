@@ -1,10 +1,8 @@
 package com.doug.android.app.sunshine;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -65,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void openPreferredLocationInMap(){
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        String location = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
+        String location = Utility.getPreferredLocation(this);
 
         Uri geoLocationIntentUri = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q", location).build();
         Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoLocationIntentUri);
