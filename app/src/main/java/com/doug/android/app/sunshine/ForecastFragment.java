@@ -1,12 +1,13 @@
 package com.doug.android.app.sunshine;
 
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,8 +22,9 @@ import com.doug.android.app.sunshine.data.WeatherContract;
  * Created by Doug on 17/10/2016.
  */
 
-public class ForecastFragment extends Fragment {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    private static final int FORECAST_LOADER = 0;
     ForecastAdapter mForecastAdapter;
 
     public ForecastFragment() {
@@ -52,11 +54,14 @@ public class ForecastFragment extends Fragment {
 
     private void updateWeather() {
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+        String location = Utility.getPreferredLocation(getActivity());
+        weatherTask.execute(location);
+    }
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String zipCode = sharedPref.getString(getString(R.string.pref_location_key), getString(R.string.pref_location_default));
-
-        weatherTask.execute(zipCode);
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -69,16 +74,8 @@ public class ForecastFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        String locationSetting = Utility.getPreferredLocation(getActivity());
-
-        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
-        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
-                locationSetting,
-                System.currentTimeMillis()
-        );
-
-        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri, null, null, null, sortOrder);
-        mForecastAdapter = new ForecastAdapter(getActivity(), cur, 0);
+        // The CursorAdapter will take data from our cursor and populate the ListView.
+        mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
 
         final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
@@ -89,4 +86,32 @@ public class ForecastFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting,
+                System.currentTimeMillis()
+        );
+
+        return new CursorLoader(getActivity(),
+                weatherForLocationUri,
+                null,
+                null,
+                null,
+                sortOrder
+                );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mForecastAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mForecastAdapter.swapCursor(null);
+    }
 }
