@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:xliff="http://schemas.android.com/apk/res-auto">
+
 
     <string name="app_name">Sunshine</string>
     <string name="hello_world">Hello world!</string>
@@ -19,5 +20,10 @@
     <string name="pref_temp_unit_default">metric</string>
     <string name="action_map">Map Location</string>
     <string name="action_share">Share</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <!-- Date format for displaying day of week and date (i.e. Mon Jun 1) [CHAR LIMIT=20] -->
+    <string name="format_full_friendly_date"><xliff:g id="day">%1$s</xliff:g>, <xliff:g id="date">%2$s</xliff:g></string>
+
 
 </resources>
