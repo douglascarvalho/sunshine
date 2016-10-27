@@ -19,6 +19,25 @@ public class ForecastAdapter extends CursorAdapter {
     private static final int VIEW_TYPE_FUTURE_DAY = 1;
     private static final String LOG_TAG = ForecastAdapter.class.getSimpleName();
 
+    /*Cache of the children views for a forecast list item.*/
+    public static class ViewHolder {
+        public final ImageView iconView;
+        public final TextView dateView;
+        public final TextView descriptionView;
+        public final TextView highTempView;
+        public final TextView lowTempView;
+
+        public ViewHolder(View view){
+            iconView = (ImageView) view.findViewById(R.id.list_item_icon);
+            dateView = (TextView) view.findViewById(R.id.list_item_date_textview);
+            descriptionView = (TextView) view.findViewById(R.id.list_item_forecast_textview);
+            highTempView = (TextView) view.findViewById(R.id.list_item_high_textview);
+            lowTempView = (TextView) view.findViewById(R.id.list_item_low_textview);
+        }
+    }
+
+
+
     public ForecastAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
@@ -71,7 +90,9 @@ public class ForecastAdapter extends CursorAdapter {
             layoutId = R.layout.list_item_forecast;
         }
 
-        return LayoutInflater.from(context).inflate(layoutId, parent, false);
+        View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
+        view.setTag(new ViewHolder(view));
+        return view;
     }
 
     /*
@@ -80,24 +101,21 @@ public class ForecastAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        ImageView iconView = (ImageView) view.findViewById(R.id.list_item_icon);
-        iconView.setImageResource(R.mipmap.ic_launcher);
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+
+        viewHolder.iconView.setImageResource(R.mipmap.ic_launcher);
 
         long dateInMillis = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
-        String date = Utility.getFriendlyDayString(context, dateInMillis);
-        ((TextView)view.findViewById(R.id.list_item_date_textview)).setText(date);
+        viewHolder.dateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
 
-        String weather = cursor.getString(ForecastFragment.COL_WEATHER_DESC);
-        ((TextView)view.findViewById(R.id.list_item_forecast_textview)).setText(date);
+        viewHolder.descriptionView.setText(cursor.getString(ForecastFragment.COL_WEATHER_DESC));
 
         boolean isMetric = Utility.isMetric(context);
 
         double high = cursor.getDouble(ForecastFragment.COL_WEATHER_MAX_TEMP);
-        TextView highView = (TextView) view.findViewById(R.id.list_item_high_textview);
-        highView.setText(Utility.formatTemperature(high, isMetric));
+        viewHolder.highTempView.setText(Utility.formatTemperature(high, isMetric));
 
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
-        TextView lowView = (TextView) view.findViewById(R.id.list_item_low_textview);
-        lowView.setText(Utility.formatTemperature(low, isMetric));
+        viewHolder.lowTempView.setText(Utility.formatTemperature(low, isMetric));
     }
 }
