@@ -78,7 +78,8 @@ public class ForecastAdapter extends CursorAdapter {
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
 
-        viewHolder.iconView.setImageResource(R.mipmap.ic_launcher);
+        int conditionId = cursor.getInt(ForecastFragment.COL_WEATHER_CONDITION_ID);
+        viewHolder.iconView.setImageResource(getResourceForWeatherCondition(conditionId, cursor));
 
         long dateInMillis = cursor.getLong(ForecastFragment.COL_WEATHER_DATE);
         viewHolder.dateView.setText(Utility.getFriendlyDayString(context, dateInMillis));
@@ -93,4 +94,24 @@ public class ForecastAdapter extends CursorAdapter {
         double low = cursor.getDouble(ForecastFragment.COL_WEATHER_MIN_TEMP);
         viewHolder.lowTempView.setText(Utility.formatTemperature(context, low, isMetric));
     }
+
+    /*
+        Helper method to return the right icon (colored or grey) depending on day
+     */
+    public int getResourceForWeatherCondition(int conditionId, Cursor cursor){
+        int resource = -1;
+        int viewType = getItemViewType(cursor.getPosition());
+
+        switch (viewType) {
+            case VIEW_TYPE_TODAY:{
+                return Utility.getArtResourceForWeatherCondition(conditionId);
+            }
+            case VIEW_TYPE_FUTURE_DAY:{
+                return Utility.getIconResourceForWeatherCondition(conditionId);
+            }
+            default:
+                return Utility.getIconResourceForWeatherCondition(conditionId);
+        }
+    }
+
 }
