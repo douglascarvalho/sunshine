@@ -58,6 +58,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     private ForecastAdapter mForecastAdapter;
     private ListView mListView;
     private int mPosition = ListView.INVALID_POSITION;
+    private boolean mUseTodayLayout;
 
     public ForecastFragment() {
     }
@@ -102,6 +103,13 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         weatherTask.execute(location);
     }
 
+    public void setmUseTodayLayout(boolean mUseTodayLayout) {
+        this.mUseTodayLayout = mUseTodayLayout;
+        if(mForecastAdapter != null){
+            mForecastAdapter.setmUseTodayLayout(mUseTodayLayout);
+        }
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(FORECAST_LOADER, null, this);
@@ -114,6 +122,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
 
         // The CursorAdapter will take data from our cursor and populate the ListView.
         mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
+        mForecastAdapter.setmUseTodayLayout(mUseTodayLayout);
 
         if (savedInstanceState != null) { mPosition = savedInstanceState.getInt("POSITION"); }
 
