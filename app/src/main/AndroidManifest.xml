@@ -40,6 +40,8 @@
             android:authorities="com.doug.android.app.sunshine"
             android:name=".data.WeatherProvider" />
 
+        <service android:name=".service.SunshineService"/>
+
     </application>
 
 </manifest>
