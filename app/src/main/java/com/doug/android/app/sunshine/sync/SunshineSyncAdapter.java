@@ -309,7 +309,14 @@ public class SunshineSyncAdapter extends AbstractThreadedSyncAdapter {
                 inserted = getContext().getContentResolver().bulkInsert(WeatherContract.WeatherEntry.CONTENT_URI, cvArray);
             }
 
-            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted");
+            String yesterday = Long.toString(dayTime.setJulianDay(julianStartDay-1));
+
+            int deleted = getContext().getContentResolver().delete(
+                    WeatherContract.WeatherEntry.CONTENT_URI,
+                    WeatherContract.WeatherEntry.COLUMN_DATE + " <= ?",
+                    new String[]{yesterday});
+
+            Log.d(LOG_TAG, "FetchWeatherTask Complete. " + inserted + " Inserted | " + deleted + " old rows deleted.");
 
         } catch (JSONException e) {
             Log.e(LOG_TAG, e.getMessage(), e);
