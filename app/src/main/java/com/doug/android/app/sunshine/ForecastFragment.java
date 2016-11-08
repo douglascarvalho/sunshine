@@ -1,5 +1,6 @@
 package com.doug.android.app.sunshine;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -93,6 +94,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if(itemId == R.id.action_refresh){
             updateWeather();
             return true;
+        } else if (itemId == R.id.action_map) {
+            openPreferredLocationInMap();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -170,6 +174,36 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     void onLocationChanged(){
         updateWeather();
         getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+    }
+
+    public void openPreferredLocationInMap(){
+        // Using the URI scheme for showing a location found on a map.  This super-handy
+        // intent can is detailed in the "Common Intents" page of Android's developer site:
+        // http://developer.android.com/guide/components/intents-common.html#Maps
+
+        if ( mForecastAdapter != null ) {
+            Cursor cursor = mForecastAdapter.getCursor();
+            if ( cursor != null ) {
+                cursor.moveToPosition(0);
+                String posLat = cursor.getString(COL_COORD_LAT);
+                String posLong = cursor.getString(COL_COORD_LONG);
+                Uri geoLocation = Uri.parse("geo:" + posLat + "," + posLong);
+
+                Intent intent = new Intent(Intent.ACTION_VIEW, geoLocation);
+
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                   startActivity(intent);
+                }
+            }
+        }
+
+        /*String location = Utility.getPreferredLocation(this);
+
+        Uri geoLocationIntentUri = Uri.parse("geo:0,0?").buildUpon().appendQueryParameter("q", location).build();
+        Intent mapIntent = new Intent(Intent.ACTION_VIEW, geoLocationIntentUri);
+        if(mapIntent.resolveActivity(getPackageManager()) != null){
+            startActivity(mapIntent);
+        }*/
     }
 
     @Override
